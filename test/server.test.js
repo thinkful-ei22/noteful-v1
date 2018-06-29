@@ -27,20 +27,10 @@ describe('Reality check', function () {
 
 describe('Noteful App', function () {
 
-  let server;
-  before(function () {
-    return app.startServer()
-      .then(instance => server = instance);
-  });
-
-  after(function () {
-    return server.stopServer();
-  });
-
   describe('Static server', function () {
 
     it('GET request "/" should return the index page', function () {
-      return chai.request(server)
+      return chai.request(app)
         .get('/')
         .then(function (res) {
           expect(res).to.exist;
@@ -54,7 +44,7 @@ describe('Noteful App', function () {
   describe('404 handler', function () {
 
     it('should respond with 404 when given a bad path', function () {
-      return chai.request(server)
+      return chai.request(app)
         .get('/bad/path')
         .catch(err => err.response)
         .then(res => {
@@ -67,7 +57,7 @@ describe('Noteful App', function () {
   describe('GET /api/notes', function () {
 
     it('should return the default of 10 Notes ', function () {
-      return chai.request(server)
+      return chai.request(app)
         .get('/api/notes')
         .then(function (res) {
           expect(res).to.have.status(200);
@@ -78,7 +68,7 @@ describe('Noteful App', function () {
     });
 
     it('should return a list with the correct right fields', function () {
-      return chai.request(server)
+      return chai.request(app)
         .get('/api/notes')
         .then(function (res) {
           expect(res).to.have.status(200);
@@ -93,7 +83,7 @@ describe('Noteful App', function () {
     });
 
     it('should return correct search results for a valid query', function () {
-      return chai.request(server)
+      return chai.request(app)
         .get('/api/notes?searchTerm=about%20cats')
         .then(function (res) {
           expect(res).to.have.status(200);
@@ -105,7 +95,7 @@ describe('Noteful App', function () {
     });
 
     it('should return an empty array for an incorrect query', function () {
-      return chai.request(server)
+      return chai.request(app)
         .get('/api/notes?searchTerm=Not%20a%20Valid%20Search')
         .then(function (res) {
           expect(res).to.have.status(200);
@@ -120,7 +110,7 @@ describe('Noteful App', function () {
   describe('GET /api/notes/:id', function () {
 
     it('should return correct notes', function () {
-      return chai.request(server)
+      return chai.request(app)
         .get('/api/notes/1000')
         .then(function (res) {
           expect(res).to.have.status(200);
@@ -133,7 +123,7 @@ describe('Noteful App', function () {
     });
 
     it('should respond with a 404 for an invalid id', function () {
-      return chai.request(server)
+      return chai.request(app)
         .get('/api/notes/DOESNOTEXIST')
         .catch(err => err.response)
         .then(res => {
@@ -150,7 +140,7 @@ describe('Noteful App', function () {
         'title': 'The best article about cats ever!',
         'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...'
       };
-      return chai.request(server)
+      return chai.request(app)
         .post('/api/notes')
         .send(newItem)
         .then(function (res) {
@@ -170,7 +160,7 @@ describe('Noteful App', function () {
       const newItem = {
         'foo': 'bar'
       };
-      return chai.request(server)
+      return chai.request(app)
         .post('/api/notes')
         .send(newItem)
         .catch(err => err.response)
@@ -191,7 +181,7 @@ describe('Noteful App', function () {
         'title': 'What about dogs?!',
         'content': 'woof woof'
       };
-      return chai.request(server)
+      return chai.request(app)
         .put('/api/notes/1005')
         .send(updateItem)
         .then(function (res) {
@@ -211,7 +201,7 @@ describe('Noteful App', function () {
         'title': 'What about dogs?!',
         'content': 'woof woof'
       };
-      return chai.request(server)
+      return chai.request(app)
         .put('/api/notes/DOESNOTEXIST')
         .send(updateItem)
         .catch(err => err.response)
@@ -224,7 +214,7 @@ describe('Noteful App', function () {
       const updateItem = {
         'foo': 'bar'
       };
-      return chai.request(server)
+      return chai.request(app)
         .put('/api/notes/1005')
         .send(updateItem)
         .catch(err => err.response)
@@ -241,7 +231,7 @@ describe('Noteful App', function () {
   describe('DELETE  /api/notes/:id', function () {
 
     it('should delete an item by id', function () {
-      return chai.request(server)
+      return chai.request(app)
         .delete('/api/notes/1005')
         .then(function (res) {
           expect(res).to.have.status(204);
